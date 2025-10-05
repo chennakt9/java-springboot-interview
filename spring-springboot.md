@@ -1,0 +1,15 @@
+- Explain how dependency injection works internally in Spring.
+  - IOC container == Application context (Where all created objects are stored)
+  - @Component, @Service, ... these types of classes will be managed by IOC container
+  - Bean life cycle
+    - Bean Definition Phase (scan @component, etc.. and create BeanDefinition for each)
+    - Instantiation
+    - Dependency Injection
+    - Initialization Callbacks (bean-specific init logic, like @PostConstruct)
+
+- How do you handle huge traffic in Spring Boot APIs? (connection pool, caching, async calls)
+  - Connection Pooling: Reuses a limited number of pre-created DB connections to avoid creating a new one for every request.
+  - Caching: Stores frequently accessed data in memory to reduce repeated DB or network calls.
+  - Async Calls: Executes long-running tasks in separate threads so main requests don’t block. (web flux)
+  - Thread Pool Tuning: Adjusts the number of threads handling requests to optimize CPU and memory usage.
+  - HTTP Connection Optimization: Reuses and compresses HTTP connections to reduce latency and bandwidth.
