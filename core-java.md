@@ -68,3 +68,8 @@
   - Stores class definitions, method metadata, and reflection info.
   - Grows dynamically (limited by system memory).
   - -XX:MaxMetaspaceSize=256m
+
+### Difference between HashSet, LinkedHashSet, TreeSet
+- HashSet : No guaranteed order; elements are stored based on their hash code.
+- LinkedHashSet : Maintains insertion order (the order in which elements were added).
+- TreeSet : Maintains natural ordering or custom ordering (via a Comparator).
