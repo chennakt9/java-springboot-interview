@@ -73,3 +73,16 @@
 - HashSet : No guaranteed order; elements are stored based on their hash code.
 - LinkedHashSet : Maintains insertion order (the order in which elements were added).
 - TreeSet : Maintains natural ordering or custom ordering (via a Comparator).
+
+### Difference between HashMap, HashTable, and ConcurrentHashMap
+- HashMap → Not thread-safe, allows one null key and many null values.
+- Hashtable → Thread-safe (synchronized), but doesn’t allow any nulls and is slower.
+- ConcurrentHashMap → Thread-safe with fine-grained locking, no nulls, and much faster under concurrency.
+
+### Explain volatile and synchronized in multithreading
+- volatile : Keyword that ensures visibility of changes across threads.
+- synchronized : Only one thread can execute a synchronized block/method at a time
+
+### Deep copy vs Shallow copy
+- Shallow Copy : Copies the object’s top-level structure only
+- Deep Copy : Copies everything recursively
