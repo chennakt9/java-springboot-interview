@@ -3,7 +3,7 @@
   - @Component, @Service, ... these types of classes will be managed by IOC container
   - Bean life cycle
     - Bean Definition Phase (scan @component, etc.. and create BeanDefinition for each)
-    - Instantiation
+    - Initialization
     - Dependency Injection
     - Initialization Callbacks (bean-specific init logic, like @PostConstruct)
 
@@ -40,3 +40,29 @@
 - How do you configure connection pool (HikariCP) for high-throughput services?
   - maximum-pool-size : (core count × 2) + some buffer
   - idle-timeout: 60000
+
+- Difference between @Component, @Service, and @Repository
+  - @Component
+    Generic component — used when nothing else fits
+  - @Service
+    Marks a business logic/service class
+  - @Repository
+    Marks a DAO (Data Access Object) class
+
+- How does Spring Boot auto-configuration work ?
+  - Spring Boot auto-configuration is about automatically creating Spring beans based on the classpath, beans, and properties
+  - Spring Boot uses @EnableAutoConfiguration (present inside @SpringBootApplication)
+
+- Exception handling best practices in REST APIs
+  - In Spring Boot, use @ControllerAdvice + @ExceptionHandler to handle exceptions globally.
+
+- How to secure REST APIs (JWT, OAuth2)?
+  - JWT
+    - headers.payload.signature
+    - issuer : sign(headers.payload, privateKey) = signature
+    - verifier : if(Sign(header.payload, publicKey) == signature) -> valid
+  - OAuth2
+    - OAuth2 is authorization, not authentication.
+    - OAuth2 uses JWT usually
+    - Issuer server : The JWT is signed by the authorization server using its private key.
+    - Resource server : It uses the public key of the authorization server to verify the signature.
