@@ -86,3 +86,13 @@
 ### Deep copy vs Shallow copy
 - Shallow Copy : Copies the object’s top-level structure only
 - Deep Copy : Copies everything recursively
+
+### Explain difference between abstract class and interface (Java 8 default/static methods).
+- Abstract Class
+  - Can have abstract + concrete methods
+  - Can have instance variables (with any access modifiers)
+  - can define constructors
+- Interface
+  - Can have abstract, default, and static methods
+  - Can have only public static final constants
+  - No constructors allowed
