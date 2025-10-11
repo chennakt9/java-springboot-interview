@@ -49,3 +49,33 @@
   - Avoid SELECT * from large joined tables.
   - Use database-specific hints via native queries if needed.
   - Prefer JOIN FETCH over @ManyToOne(fetch = EAGER)
+
+- Difference between Lazy and Eager loading
+  - Lazy : Related entities are fetched only when you access them.
+  - Eager
+    - Related entities are fetched immediately along with the main entity.
+    - If we use join fetch, we can solve N + 1 problem
+  
+- What are N+1 query problems? How to solve them?
+  - Use JOIN FETCH
+  - Use Entity Graph
+
+- How does Hibernate manage transactions?
+  - @Transactional
+    - Open a transaction at method start.
+    - Commit it if no exceptions occur.
+    - Rollback automatically on exceptions.
+  - flow
+    - session.beginTransaction()
+    - All operations (save, update, delete) are queued in Hibernate’s first-level cache (session).
+    - session.flush() / tx.commit() → flushes the session to the database and commits the transaction.
+    - If an exception occurs → tx.rollback() ensures atomicity.
+
+- Entity lifecycle states (Transient, Persistent, Detached, Removed)
+  - Transient
+    - A new object that exists only in memory, not associated with any Hibernate Session
+    - User user = new User(); // transient
+  - Persistent
+    - An object that is associated with a Hibernate Session and will be synchronized with the database on commit.
+  - Detached
+    - A persistent object whose Session has been closed, or it has been evicted from the session.
