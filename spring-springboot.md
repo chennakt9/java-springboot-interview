@@ -13,3 +13,30 @@
   - Async Calls: Executes long-running tasks in separate threads so main requests don’t block. (web flux)
   - Thread Pool Tuning: Adjusts the number of threads handling requests to optimize CPU and memory usage.
   - HTTP Connection Optimization: Reuses and compresses HTTP connections to reduce latency and bandwidth.
+
+- How does Spring Boot autoconfiguration pick the right DataSource bean?
+  - DataSource = ex:HikariDataSource, a class which manages db-config and connection pool
+
+- Explain Spring Boot starter parent and dependency management.
+  - You don’t need to specify versions for Spring Boot dependencies (like spring-boot-starter-web or spring-boot-starter-data-jpa) because the parent already provides them.
+
+- How do you debug lazy initialization exceptions in JPA/Hibernate?
+  - stack trace
+  - spring.jpa.show-sql=true
+
+- Explain how @Transactional isolation levels work in banking systems. (RU, RC, RR, S)
+  - READ_UNCOMMITTED : Can read uncommitted changes from other transactions (dirty reads)
+  - READ_COMMITTED : Can only read committed data
+  - REPEATABLE_READ : Same read twice in one transaction returns same data
+  - SERIALIZABLE : Transactions execute as if sequentially
+
+- How to implement role-based access control (RBAC) in Spring Security?
+  -  authorize.requestMatchers(HttpMethod.GET, "/api/v1/offers/rule","/health", "/actuator/health/**" ...
+
+- How to detect and fix N+1 query problem in Spring Data JPA?
+  - show-sql: true
+  - Use JOIN FETCH or EntityGraph in all “list with children” repo methods.
+
+- How do you configure connection pool (HikariCP) for high-throughput services?
+  - maximum-pool-size : (core count × 2) + some buffer
+  - idle-timeout: 60000
