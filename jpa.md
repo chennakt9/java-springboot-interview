@@ -79,3 +79,39 @@
     - An object that is associated with a Hibernate Session and will be synchronized with the database on commit.
   - Detached
     - A persistent object whose Session has been closed, or it has been evicted from the session.
+
+  - Difference between save(), saveOrUpdate(), and persist() in Hibernate.
+    - save() → Inserts a new record and returns the generated ID.
+    - saveOrUpdate() → Inserts if new, updates if existing.
+    - persist() → Makes entity managed (inserted only on flush), no ID returned, JPA-standard.
+
+- Explain lazy loading and how to avoid LazyInitializationException.
+  - Lazy loading: Hibernate fetches related data only when accessed, not when the parent entity is loaded.
+  - LazyInitializationException: Happens if you access lazy data after the session is closed.
+  - How to avoid:
+    - Fetch data within the session using fetch join or Hibernate.initialize().
+    - Keep the session open until data access (Open Session in View).
+    - Use EAGER fetch cautiously for small associations.
+
+- How does @OneToMany and @ManyToOne mapping work?
+  - @OneToMany: One entity is linked to many others; inverse side, default LAZY, e.g., one User has many Orders.
+  - @ManyToOne: Many entities link to one; owning side with foreign key, default EAGER, e.g., many Orders belong to one User.
+
+- How do you use pagination and sorting in Spring Data JPA?
+  - PageRequest.of(page, size, sort) → creates a pageable object.
+    - page → 0-based page index.
+    - size → number of records per page.
+    - sort → field(s) to sort by (asc/desc).
+
+- Explain optimistic vs pessimistic locking in JPA.
+  - Optimistic Locking
+    - Concept: Assumes conflicts are rare; multiple transactions can read the same entity.
+    - Uses a version field (@Version) in the entity.
+    - When updating, JPA checks the version — if it changed since read, throws OptimisticLockException.
+    - Use case: High-read, low-write scenarios.
+  - Pessimistic Locking
+    - Concept: Assumes conflicts are likely; locks the entity when reading it.
+    - How it works:
+      - Uses database locks to prevent other transactions from updating the entity until the lock is released.
+      - Can be PESSIMISTIC_READ or PESSIMISTIC_WRITE.
+    - Use case: High-write scenarios where conflicts must be prevented.
