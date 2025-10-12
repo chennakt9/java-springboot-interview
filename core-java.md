@@ -3,7 +3,7 @@
 - double-checked lock
 - enum singleton
 
-### Immutable class
+### How do you create an immutable class in Java?
 - make class final
 - all class variables as private
 
@@ -96,3 +96,13 @@
   - Can have abstract, default, and static methods
   - Can have only public static final constants
   - No constructors allowed
+
+### Difference between Comparable and Comparator with code example.
+- Comparable
+  - java.lang
+  - int compareTo(T o)
+  - It is implemented inside the class being sorted
+- Comparator
+  - java.util
+  - int compare(T o1, T o2)
+  - It is implemented In a separate class (or lambda)
