@@ -66,3 +66,15 @@
     - OAuth2 uses JWT usually
     - Issuer server : The JWT is signed by the authorization server using its private key.
     - Resource server : It uses the public key of the authorization server to verify the signature.
+
+- Difference between @Autowired and @Qualifier.
+  - @Autowired injects a bean by type, while @Qualifier specifies which exact bean to inject when multiple of the same type exist.
+
+- How do you implement Spring Boot profiles for different environments?
+  - spring.profiles.active=dev
+  - @Profile("dev") - Spring will only load the beans that match the active profile.
+
+- How do you secure Spring Boot REST APIs using JWT/OAuth2?
+  - first create SecurityFilterChain, then requestMatchers("/auth/**").permitAll()
+  - JWT : server issues JWT using private key, client send it back in headers, server verifies using public key
+  - OAuth2 : Auth server issues JWT with private key, client send it back in headers, our app validates using public key
