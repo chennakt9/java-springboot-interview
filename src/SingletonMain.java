@@ -1,4 +1,4 @@
-public class Main {
+public class SingletonMain {
     public static void main(String[] args) {
         // Call getInstance multiple times
         Singleton s1 = Singleton.getInstance();
