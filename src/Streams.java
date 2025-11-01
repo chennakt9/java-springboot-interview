@@ -7,7 +7,7 @@ public class Streams {
         List<Integer> list = Arrays.asList(1, 10, 20, 30, 15, 1);
 
         // Question 1: Sum of numbers
-        Integer sum = list.stream().mapToInt(Integer::intValue).sum().orElse(0);
+        Integer sum = list.stream().mapToInt(Integer::intValue).sum();
         System.out.println("Sum: " + sum);
 
         // Question 2: average of numbers
