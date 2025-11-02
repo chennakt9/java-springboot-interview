@@ -1,3 +1,12 @@
+### Java 17 features
+- Sealed class
+
+### Java 11 features
+- New string methods
+  - .strip()
+  - .stripLeading()
+  - .stripTrailing()
+
 ### Singleton class
 - bill-pugh (static holder) method
 - double-checked lock
