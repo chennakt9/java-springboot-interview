@@ -2,6 +2,7 @@
 - Sealed class
 
 ### Java 11 features
+- Run java code without compiling
 - New string methods
   - .strip()
   - .stripLeading()
