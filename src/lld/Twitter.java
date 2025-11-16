@@ -1,6 +1,7 @@
 package lld;
 
 /*
+    ref : https://chatgpt.com/share/6919ab91-081c-800e-8c0e-e3153eb18cad
     User
         - id
         - username
