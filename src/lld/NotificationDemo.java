@@ -4,6 +4,7 @@ import java.util.*;
 
 /*
     ref : https://leetcode.com/discuss/post/2312435/amazon-lld-notification-system-by-pravee-moxy/
+    ref : https://chatgpt.com/c/6921b0bf-fed4-8320-8ac4-70617b7884d9
 
     Message
         - type ("sms", "email", "whatsapp")
@@ -40,6 +41,18 @@ import java.util.*;
     5. Do you need to abstract both Message and MessageHandler?
         - Message varies by channel → needs polymorphism
         - Handler varies by channel → needs polymorphism
+    6. How to add urgency also here. High, Medium, Low ?
+        - strategy to act differently based on urgency.
+        - strategy.send(message)
+    7. Fallback Channels
+        - Chain of Responsibility
+    8. Scaling to millions of messages
+        - queue.send()
+    9. tracking Status
+        - high urgency messages, update status immediately
+        - for low ones, we use async, so update from a webhook
+    10. Scheduling Notifications (ex : at tomorrow 10 AM)
+        - store in DB, background thread polls
 */
 
 class Message {
