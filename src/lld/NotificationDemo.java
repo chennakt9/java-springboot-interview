@@ -4,7 +4,7 @@ import java.util.*;
 
 /*
     ref : https://leetcode.com/discuss/post/2312435/amazon-lld-notification-system-by-pravee-moxy/
-    ref : https://chatgpt.com/c/6921b0bf-fed4-8320-8ac4-70617b7884d9
+    ref : https://chatgpt.com/share/6922a6f0-69dc-800e-a1a8-0be90eb3047d
 
     Message
         - type ("sms", "email", "whatsapp")
