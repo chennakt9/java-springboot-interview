@@ -1,7 +1,7 @@
 package lld;
 
 /*
-    ref  : https://chatgpt.com/c/69228957-b178-8323-9f09-6c7e5c09c438
+    ref  : https://chatgpt.com/share/6922a6b6-e414-800e-9010-ebdc734fd758
 
     requirements:
     1. Create a locker reservation when courier arrives.
