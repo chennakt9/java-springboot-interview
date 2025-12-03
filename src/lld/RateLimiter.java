@@ -55,12 +55,12 @@ package lld;
     ====================Sliding Window Counter=======================
     public boolean allow() {
         long now = System.currentTimeMillis();
-        long diff = now - lastBucketTime;
+        long diff = now - windowStart;
 
         if (diff >= bucketSize) {
             previousBucket = currentBucket;
             currentBucket = 0;
-            lastBucketTime = now;
+            windowStart = now;
         }
 
         double weight = (double)(bucketSize - diff) / bucketSize;
