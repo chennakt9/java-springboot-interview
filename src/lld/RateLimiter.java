@@ -101,10 +101,8 @@ package lld;
 
         long leaks = elapsed / leakIntervalMillis; // how many units leaked
 
-        if (leaks > 0) {
-            current = Math.max(0, current - (int) leaks);
-            lastLeakTime = now;
-        }
+        current = Math.max(0, current - (int) leaks);
+        lastLeakTime = now;
 
         if (current < capacity) {
             current++;
