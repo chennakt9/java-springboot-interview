@@ -112,7 +112,7 @@ package lld;
     }
 
     note :
-        - does not allow burst requests
+        - allows bursts but up to capacity
 */
 
 public class RateLimiter {
