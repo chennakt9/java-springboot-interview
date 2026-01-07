@@ -49,7 +49,7 @@ InProgressState
 
 ResolvedState
     + startProgress(issue)      (not allowed)
-    + resolveIssue(issue)       (already resolved)
+    + resolveIssue(issue)       (not allowed)
     + closeIssue(issue)
     + reopenIssue(issue)
     + getStatus()
@@ -57,7 +57,7 @@ ResolvedState
 ClosedState
     + startProgress(issue)      (not allowed)
     + resolveIssue(issue)       (not allowed)
-    + closeIssue(issue)         (already closed)
+    + closeIssue(issue)         (not allowed)
     + reopenIssue(issue)
     + getStatus()
 

@@ -84,6 +84,16 @@ package lld;
     note:
         1. If we have optional features, use builder pattern along with decorator pattern
         2. Use strategy pattern for notification service
+
+ MeetingRoom mr = MeetingRoomBuilder(sdkj, sakj, aklsjf);
+
+ BasicRoom
+    - mr
+
+(BookingRequestBuilder.isTVRequired) == true {
+    new TVDecorator(BasicRoom)
+}
+
 */
 
 public class MeetingRoom {
