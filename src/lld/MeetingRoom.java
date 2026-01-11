@@ -54,19 +54,15 @@ package lld;
     + requireAC()
     + build() : BookingRequest
 
-    RoomFeature <Interface>
+    RoomDecorator <Interface>
     + getDescription()
 
-    BasicRoom <implements RoomFeature>
-    - meetingRoom
-    + getDescription()
-
-    RoomDecorator <implements RoomFeature>
-    - wrappedRoom : RoomFeature
+    BasicRoom <implements RoomDecorator>
+    - wrappedRoom: meetingRoom
     + getDescription()
 
     TVDecorator <implements RoomFeature>
-    - wrappedRoom
+    - wrappedRoom: meetingRoom
     + getDescription()
 
     WhiteboardDecorator <implements RoomFeature>
