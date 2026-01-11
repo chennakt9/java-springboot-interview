@@ -54,23 +54,19 @@ package lld;
     + requireAC()
     + build() : BookingRequest
 
-    RoomDecorator <Interface>
-    + getDescription()
+    RoomDecorator <abstract implements Room>
+        - wrappedRoom : Room
+        + getDescription()
+        + isAvailable(startTime, endTime)
+        + book(booking)
 
-    BasicRoom <implements RoomDecorator>
-    - wrappedRoom: meetingRoom
-    + getDescription()
-
-    TVDecorator <implements RoomFeature>
-    - wrappedRoom: meetingRoom
-    + getDescription()
-
-    WhiteboardDecorator <implements RoomFeature>
-        - wrappedRoom
+    TVDecorator <extends RoomDecorator>
         + getDescription()
 
-    ACDecorator <implements RoomFeature>
-        - wrappedRoom
+    WhiteboardDecorator <extends RoomDecorator>
+        + getDescription()
+
+    ACDecorator <extends RoomDecorator>
         + getDescription()
 
     NotificationService
