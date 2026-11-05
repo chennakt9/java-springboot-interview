@@ -1,7 +1,7 @@
 package lld;
 
 /*
-    ref : https://chatgpt.com/share/6919c9d6-fd6c-800e-b759-8290c4fde5f0
+    ref : https://chatgpt.com/share/6aebe8c4-eb10-83ee-9136-9ae904349e6d
     VehicleType
         BIKE, CAR, TRUCK
 
@@ -11,43 +11,52 @@ package lld;
         + getNumber()
         + getType()
 
-    ParkingSlot
-        - slotId
-        - vehicleType
-        - free
-        - parkedVehicle
+ParkingLot
+- Map<floorId, ParkingFloor>
+- activeTickets
 
-         + isFree()
-         + getType()
-         + getSlotId()
++ park()
++ unpark()
 
-         + park()
-         + unpark()
 
-    ParkingFloor
-        - floorId
-        - slots
+--------x----x--------------
+ParkingFloor
+- floorId
+- Map<slotId, ParkingSlot>
 
-        + getFreeSlot()
-        + getFloorId()
++ getFreeSlot()
 
-    ParkingTicket
-        - ticketId
-        - floorId
-        - slotId
-        - vehicleNumber
+--------x----x--------------
+ParkingSlot
+- slotId
+- vehicleType
+- isFree
+- parkedVehicle
 
-        + getTicketId()
-        + getFloorId()
-        + getSlotId()
-        + getVehicleNumber()
++ park()
++ unpark()
 
-    ParkingLot
-        - floors
-        - activeTickets
+--------x----x--------------
+ParkingTicket
+- ticketId
+- floorId
+- slotId
+- vehicleNumber
 
-        + park()
-        + unpark()
+
+--------x----x--------------
+IParkingSlotStrategy
++ getFreeSlot()
+
+--------x----x--------------
+FirstAvailableSlotStrategy implements IParkingSlotStrategy
++ getFreeSlot()
+
+--------x----x--------------
+NearestSlotStrategy implements IParkingSlotStrategy
++ getFreeSlot()
+
+
 
 
 */
