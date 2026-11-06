@@ -1,241 +1,421 @@
-package lld;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
-/*
+// ==================== Product ====================
 
-
-*/
-
-// ----------------------- Product -----------------------
 class Product {
-    private String id;        // -
-    private String name;      // -
-    private int price;        // -
+    private final String id;
+    private final String name;
+    private final int price;
 
-    public Product(String id, String name, int price) {   // +
+    public Product(String id, String name, int price) {
         this.id = id;
         this.name = name;
         this.price = price;
     }
 
-    public String getId() { return id; }                 // +
-    public String getName() { return name; }             // +
-    public int getPrice() { return price; }              // +
+    public String getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getPrice() {
+        return price;
+    }
 }
 
-// ----------------------- InventoryItem -----------------------
-class InventoryItem {
-    private Product product;   // -
-    private int quantity;      // -
-
-    public InventoryItem(Product product, int quantity) {   // +
-        this.product = product;
-        this.quantity = quantity;
-    }
-
-    public boolean isAvailable() {                         // +
-        return quantity > 0;
-    }
-
-    public void reduceQuantity(int count) {                // +
-        this.quantity -= count;
-    }
-
-    public Product getProduct() { return product; }        // +
-}
+// ==================== Inventory ====================
 
 class Inventory {
-    private Map<String, InventoryItem> items = new HashMap<>();   // -
+    private final Map<String, Product> products = new HashMap<>();
+    private final Map<String, Integer> stock = new HashMap<>();
 
-    public void addProduct(Product product, int count) {          // +
-        items.put(product.getId(), new InventoryItem(product, count));
+    public void addProduct(Product product, int quantity) {
+        products.put(product.getId(), product);
+        stock.put(product.getId(), stock.getOrDefault(product.getId(), 0) + quantity);
     }
 
-    public boolean hasStock(String productId) {                   // +
-        return items.containsKey(productId) && items.get(productId).isAvailable();
+    public Product getProduct(String productId) {
+        return products.get(productId);
     }
 
-    public Product getProduct(String productId) {                 // +
-        return items.get(productId).getProduct();
+    public boolean isAvailable(String productId) {
+        return stock.getOrDefault(productId, 0) > 0;
     }
 
-    public void reduceStock(String productId) {                   // +
-        items.get(productId).reduceQuantity(1);
-    }
-}
-
-// ----------------------- PaymentService -----------------------
-class PaymentService {
-    public boolean process(int amount) {    // +
-        // always succeeds because we trust humanity (bad idea IRL)
-        return true;
-    }
-}
-
-// ----------------------- VendingState (interface) -----------------------
-interface VendingState {
-    void insertMoney(int amount);      // +
-    void selectProduct(String productId); // +
-    void dispense();                   // +
-}
-
-// ----------------------- IdleState -----------------------
-class IdleState implements VendingState {
-    private VendingMachine machine;   // -
-
-    public IdleState(VendingMachine machine) { // +
-        this.machine = machine;
-    }
-
-    public void insertMoney(int amount) {      // +
-        machine.addBalance(amount);
-        machine.setState(machine.getHasMoneyState());
-    }
-
-    public void selectProduct(String productId) {  // +
-        System.out.println("Insert money first.");
-    }
-
-    public void dispense() {                      // +
-        System.out.println("No money inserted.");
-    }
-}
-
-// ----------------------- HasMoneyState -----------------------
-class HasMoneyState implements VendingState {
-    private VendingMachine machine;   // -
-
-    public HasMoneyState(VendingMachine machine) { // +
-        this.machine = machine;
-    }
-
-    public void insertMoney(int amount) {      // +
-        machine.addBalance(amount);
-    }
-
-    public void selectProduct(String productId) {  // +
-        if (!machine.getInventory().hasStock(productId)) {
-            System.out.println("Out of stock.");
-            return;
+    public void dispense(String productId) {
+        if (!isAvailable(productId)) {
+            throw new IllegalStateException("Product out of stock");
         }
 
-        Product p = machine.getInventory().getProduct(productId);
+        stock.put(productId, stock.get(productId) - 1);
+    }
 
-        if (machine.getBalance() < p.getPrice()) {
-            System.out.println("Not enough money.");
-            return;
+    public int getStock(String productId) {
+        return stock.getOrDefault(productId, 0);
+    }
+}
+
+// ==================== Change Strategy ====================
+
+interface ChangeStrategy {
+    Map<Integer, Integer> getChange(int amount, Map<Integer, Integer> availableCoins);
+}
+
+class GreedyChangeStrategy implements ChangeStrategy {
+
+    @Override
+    public Map<Integer, Integer> getChange(int amount, Map<Integer, Integer> availableCoins) {
+        Map<Integer, Integer> result = new LinkedHashMap<>();
+
+        List<Integer> denominations = new ArrayList<>(availableCoins.keySet());
+        denominations.sort(Collections.reverseOrder());
+
+        for (int denomination : denominations) {
+            int count = Math.min(amount / denomination, availableCoins.get(denomination));
+
+            if (count > 0) {
+                result.put(denomination, count);
+                amount -= denomination * count;
+            }
         }
 
-        machine.setSelectedProduct(p);
-        machine.setState(machine.getDispensingState());
-    }
+        if (amount != 0) {
+            throw new IllegalStateException("Exact change unavailable");
+        }
 
-    public void dispense() {                     // +
-        System.out.println("Select a product first.");
-    }
-}
-
-// ----------------------- DispensingState -----------------------
-class DispensingState implements VendingState {
-    private VendingMachine machine;   // -
-
-    public DispensingState(VendingMachine machine) { // +
-        this.machine = machine;
-    }
-
-    public void insertMoney(int amount) {            // +
-        System.out.println("Wait, dispensing...");
-    }
-
-    public void selectProduct(String productId) {     // +
-        System.out.println("Already dispensing...");
-    }
-
-    public void dispense() {                          // +
-        Product p = machine.getSelectedProduct();
-        System.out.println("Dispensing: " + p.getName());
-
-        machine.getInventory().reduceStock(p.getId());
-        machine.reduceBalance(p.getPrice());
-
-        machine.setSelectedProduct(null);
-        machine.setState(machine.getIdleState());
+        return result;
     }
 }
 
-// ----------------------- VendingMachine -----------------------
+// ==================== Payment ====================
+
+class Payment {
+    private int balance;
+
+    public void addMoney(int amount) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Invalid amount");
+        }
+
+        balance += amount;
+    }
+
+    public int getBalance() {
+        return balance;
+    }
+
+    public void reset() {
+        balance = 0;
+    }
+}
+
+// ==================== Vending Machine ====================
+
 class VendingMachine {
-    private VendingState idleState;        // -
-    private VendingState hasMoneyState;    // -
-    private VendingState dispensingState;  // -
+    private final Inventory inventory;
+    private final Payment payment;
+    private final ChangeStrategy changeStrategy;
 
-    private VendingState currentState;     // -
+    private final Map<Integer, Integer> coinInventory = new HashMap<>();
 
-    private Inventory inventory = new Inventory();   // -
-    private PaymentService paymentService = new PaymentService(); // -
+    private State idleState;
+    private State readyState;
+    private State dispensingState;
+    private State currentState;
 
-    private Product selectedProduct;        // -
-    private int balance = 0;                // -
+    private Product selectedProduct;
 
-    public VendingMachine() {     // +
+    public VendingMachine(Inventory inventory, ChangeStrategy changeStrategy) {
+        this.inventory = inventory;
+        this.changeStrategy = changeStrategy;
+        this.payment = new Payment();
+
         idleState = new IdleState(this);
-        hasMoneyState = new HasMoneyState(this);
+        readyState = new ReadyState(this);
         dispensingState = new DispensingState(this);
 
         currentState = idleState;
+
+        coinInventory.put(1, 20);
+        coinInventory.put(5, 20);
+        coinInventory.put(10, 20);
+        coinInventory.put(20, 20);
+        coinInventory.put(50, 20);
     }
 
-    public void setState(VendingState state) {       // +
-        this.currentState = state;
-    }
-
-    public void insertMoney(int amount) {            // +
-        currentState.insertMoney(amount);
-    }
-
-    public void selectProduct(String productId) {    // +
+    public void selectProduct(String productId) {
         currentState.selectProduct(productId);
     }
 
-    public void dispense() {                         // +
+    public void insertMoney(int amount) {
+        currentState.insertMoney(amount);
+    }
+
+    public void dispense() {
         currentState.dispense();
     }
 
-    public void addProduct(Product p, int qty) {     // +
-        inventory.addProduct(p, qty);
+    public void cancel() {
+        currentState.cancel();
     }
 
-    public void addBalance(int amount) { balance += amount; }      // +
-    public void reduceBalance(int amount) { balance -= amount; }   // +
-    public int getBalance() { return balance; }                     // +
+    public void setState(State state) {
+        currentState = state;
+    }
 
-    public void setSelectedProduct(Product p) { this.selectedProduct = p; } // +
-    public Product getSelectedProduct() { return selectedProduct; }         // +
+    public State getIdleState() {
+        return idleState;
+    }
 
-    public Inventory getInventory() { return inventory; }   // +
+    public State getReadyState() {
+        return readyState;
+    }
 
-    public VendingState getIdleState() { return idleState; }              // +
-    public VendingState getHasMoneyState() { return hasMoneyState; }      // +
-    public VendingState getDispensingState() { return dispensingState; }  // +
+    public State getDispensingState() {
+        return dispensingState;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public Payment getPayment() {
+        return payment;
+    }
+
+    public Product getSelectedProduct() {
+        return selectedProduct;
+    }
+
+    public void setSelectedProduct(Product product) {
+        selectedProduct = product;
+    }
+
+    public Map<Integer, Integer> getCoinInventory() {
+        return coinInventory;
+    }
+
+    public Map<Integer, Integer> calculateChange(int amount) {
+        return changeStrategy.getChange(amount, coinInventory);
+    }
+
+    public void addCoins(Map<Integer, Integer> coins) {
+        for (Map.Entry<Integer, Integer> entry : coins.entrySet()) {
+            coinInventory.put(entry.getKey(), coinInventory.getOrDefault(entry.getKey(), 0) + entry.getValue());
+        }
+    }
+
+    public void reset() {
+        selectedProduct = null;
+        payment.reset();
+        currentState = idleState;
+    }
+
+    public void completeTransaction() {
+        Product product = selectedProduct;
+        int change = payment.getBalance() - product.getPrice();
+
+        Map<Integer, Integer> changeCoins = calculateChange(change);
+
+        // Update inventory only after change calculation succeeds.
+        inventory.dispense(product.getId());
+
+        for (Map.Entry<Integer, Integer> entry : changeCoins.entrySet()) {
+            int denomination = entry.getKey();
+            int count = entry.getValue();
+
+            coinInventory.put(denomination, coinInventory.get(denomination) - count);
+        }
+
+        // Store inserted money in coin inventory.
+        // This simplified implementation treats inserted money as a balance,
+        // rather than tracking individual inserted denominations.
+
+        System.out.println("Dispensing: " + product.getName());
+        System.out.println("Change: " + changeCoins);
+
+        reset();
+    }
 }
 
-// ----------------------- MAIN (demo) -----------------------
-class Main {
+// ==================== State Interface ====================
+
+interface State {
+    void selectProduct(String productId);
+    void insertMoney(int amount);
+    void dispense();
+    void cancel();
+}
+
+// ==================== Idle State ====================
+
+class IdleState implements State {
+    private final VendingMachine machine;
+
+    public IdleState(VendingMachine machine) {
+        this.machine = machine;
+    }
+
+    @Override
+    public void selectProduct(String productId) {
+        Product product = machine.getInventory().getProduct(productId);
+
+        if (product == null) {
+            System.out.println("Invalid product");
+            return;
+        }
+
+        if (!machine.getInventory().isAvailable(productId)) {
+            System.out.println("Product out of stock");
+            return;
+        }
+
+        machine.setSelectedProduct(product);
+        machine.setState(machine.getReadyState());
+
+        System.out.println("Selected: " + product.getName());
+        System.out.println("Price: " + product.getPrice());
+    }
+
+    @Override
+    public void insertMoney(int amount) {
+        System.out.println("Select a product first");
+    }
+
+    @Override
+    public void dispense() {
+        System.out.println("Select a product first");
+    }
+
+    @Override
+    public void cancel() {
+        System.out.println("No active transaction");
+    }
+}
+
+// ==================== Ready State ====================
+
+class ReadyState implements State {
+    private final VendingMachine machine;
+
+    public ReadyState(VendingMachine machine) {
+        this.machine = machine;
+    }
+
+    @Override
+    public void selectProduct(String productId) {
+        System.out.println("Product already selected");
+    }
+
+    @Override
+    public void insertMoney(int amount) {
+        try {
+            machine.getPayment().addMoney(amount);
+            System.out.println("Balance: " + machine.getPayment().getBalance());
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Override
+    public void dispense() {
+        Product product = machine.getSelectedProduct();
+
+        if (machine.getPayment().getBalance() < product.getPrice()) {
+            System.out.println("Insufficient balance");
+            return;
+        }
+
+        machine.setState(machine.getDispensingState());
+        machine.dispense();
+    }
+
+    @Override
+    public void cancel() {
+        System.out.println("Refund: " + machine.getPayment().getBalance());
+        machine.reset();
+    }
+}
+
+// ==================== Dispensing State ====================
+
+class DispensingState implements State {
+    private final VendingMachine machine;
+
+    public DispensingState(VendingMachine machine) {
+        this.machine = machine;
+    }
+
+    @Override
+    public void selectProduct(String productId) {
+        System.out.println("Dispensing in progress");
+    }
+
+    @Override
+    public void insertMoney(int amount) {
+        System.out.println("Dispensing in progress");
+    }
+
+    @Override
+    public void dispense() {
+        try {
+            machine.completeTransaction();
+        } catch (IllegalStateException e) {
+            System.out.println(e.getMessage());
+            machine.setState(machine.getReadyState());
+        }
+    }
+
+    @Override
+    public void cancel() {
+        System.out.println("Cannot cancel during dispensing");
+    }
+}
+
+// ==================== Main ====================
+
+public class Main {
     public static void main(String[] args) {
-        VendingMachine vm = new VendingMachine();
 
-        vm.addProduct(new Product("C1", "Coke", 25), 3);
-        vm.addProduct(new Product("P1", "Pepsi", 20), 2);
+        Inventory inventory = new Inventory();
 
-        vm.insertMoney(30);
-        vm.selectProduct("C1");
-        vm.dispense();
+        inventory.addProduct(new Product("1", "Coke", 40), 5);
+        inventory.addProduct(new Product("2", "Pepsi", 35), 3);
+        inventory.addProduct(new Product("3", "Water", 20), 10);
 
-        vm.insertMoney(10);
-        vm.selectProduct("P1");
-        vm.dispense();
+        ChangeStrategy changeStrategy = new GreedyChangeStrategy();
+
+        VendingMachine machine = new VendingMachine(inventory, changeStrategy);
+
+        // Transaction 1
+        machine.selectProduct("1");
+        machine.insertMoney(50);
+        machine.dispense();
+
+        System.out.println("--------------------");
+
+        // Transaction 2
+        machine.selectProduct("2");
+        machine.insertMoney(20);
+        machine.dispense();
+
+        machine.insertMoney(20);
+        machine.dispense();
+
+        System.out.println("--------------------");
+
+        // Transaction 3: Cancellation
+        machine.selectProduct("3");
+        machine.insertMoney(50);
+        machine.cancel();
+
+        System.out.println("--------------------");
+
+        // Transaction 4: Out of stock check
+        machine.selectProduct("invalid");
     }
 }
-
