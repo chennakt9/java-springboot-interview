@@ -12,6 +12,11 @@ package lld;
     + getPayload()
     + getType()
 
+
+    EventProducer
+        + generateEvent(payload, type)
+        + publishEvent(event)
+
     EventQueue
     + push(event)
     + pull(batchSize)
